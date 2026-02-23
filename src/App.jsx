@@ -9,11 +9,13 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const API_URL = (window.__ENV && window.__ENV.API_URL) || import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
   const fetchUsuarios = async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get("http://localhost:3000/usuarios");
+      const res = await axios.get(`${API_URL}/usuarios`);
       setUsuarios(res.data || []);
     } catch (e) {
       console.error(e);
@@ -31,7 +33,7 @@ function App() {
     e.preventDefault();
     if (!nombre || !email) return;
     try {
-      await axios.post("http://localhost:3000/usuarios", { nombre, email });
+      await axios.post(`${API_URL}/usuarios`, { nombre, email });
       setNombre("");
       setEmail("");
       fetchUsuarios();
@@ -43,7 +45,7 @@ function App() {
 
   return (
     <div className="app-container">
-      <header className="app-header">
+      <header className="app-header"> 
         <h1>Usuarios</h1>
         <p className="lead">Listado simple con creación rápida de Usuarios</p>
       </header>
