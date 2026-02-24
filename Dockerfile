@@ -1,21 +1,22 @@
-### Build stage
-FROM node:18-alpine AS build
+# ETAPA 1: Construcción (El Chef)
+FROM node:18-slim AS build
+
+# Recibimos la variable desde Cloud Build
+ARG VITE_API_URL
+# La convertimos en variable de entorno para que Vite la vea
+ENV VITE_API_URL=$VITE_API_URL
+
 WORKDIR /app
-
 COPY package*.json ./
-RUN npm ci
-
+RUN npm install
 COPY . .
+
+# Al correr build, Vite "pegará" la URL del backend en el código JS
 RUN npm run build
 
-### Production stage
-FROM nginx:stable-alpine
+# ETAPA 2: Servidor (El Mesero)
+FROM nginx:alpine
+# Copiamos la carpeta 'dist' que generó Vite
 COPY --from=build /app/dist /usr/share/nginx/html
-
-# copy entrypoint that writes runtime env.js from environment variables
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
-
 EXPOSE 80
-ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
