@@ -26,6 +26,8 @@ steps:
       - '--region'
       - 'us-west1'
       - '--allow-unauthenticated'
+      - '--port'
+      - '8080'
 
 images:
   - 'us-west1-docker.pkg.dev/sondacloud-488321/my-artifacts/frontend-app'
